@@ -55,6 +55,11 @@ function App() {
   };
 
   const myIndex = queue.findIndex(item => item.id === myId) + 1;
+  
+  // Calculate wait time: 
+  // If they are #2, they wait for person #1 (20 mins).
+  // If they are #1, they are next! (0-5 mins or just "You're next!")
+  const waitTime = (myIndex - 1) * 20;
 
   return (
     <div className="container">
@@ -123,7 +128,7 @@ function App() {
             <div className="card success">
               <h2>Success!</h2>
               <div className="badge">#{myIndex}</div>
-              <p>Wait time: {myIndex * 5} mins</p>
+              <p>Wait time: {myIndex * 20} mins</p>
               <button className="secondary-btn" onClick={() => setIsSubmitted(false)}>Add another person</button>
             </div>
           )}
