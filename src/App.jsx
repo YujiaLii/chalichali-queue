@@ -9,7 +9,12 @@ function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [queue, setQueue] = useState([]);
   const [myId, setMyId] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false); // Toggle for staff
+  
+  const [currentView, setCurrentView] = useState('user'); 
+  const [pinInput, setPinInput] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const ADMIN_PIN = "0113"; // <--- CHANGE YOUR CODE HERE
 
   useEffect(() => {
     const q = query(collection(db, "queue"), orderBy("timestamp", "asc"));
@@ -33,52 +38,95 @@ function App() {
     }
   };
 
-  // Function for the operator to remove the person at the front
   const handleNext = async (id) => {
-    await deleteDoc(doc(db, "queue", id));
+    if(window.confirm("Are you sure you want to remove this guest?")) {
+      await deleteDoc(doc(db, "queue", id));
+    }
+  };
+
+  const checkPin = (e) => {
+    e.preventDefault();
+    if (pinInput === ADMIN_PIN) {
+      setIsAuthorized(true);
+    } else {
+      alert("Wrong PIN! Access Denied.");
+      setPinInput('');
+    }
   };
 
   const myIndex = queue.findIndex(item => item.id === myId) + 1;
 
-  // --- ADMIN VIEW ---
-  if (isAdmin) {
-    return (
-      <div className="container">
-        <h1>Staff Dashboard</h1>
-        <button onClick={() => setIsAdmin(false)}>Back to Sign-In</button>
-        <div className="admin-list">
-          {queue.map((person, index) => (
-            <div key={person.id} className="admin-item">
-              <span>{index + 1}. {person.name} ({person.phone})</span>
-              <button onClick={() => handleNext(person.id)}>✅ Done / Next</button>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // --- CUSTOMER VIEW ---
   return (
     <div className="container">
-      <header>
-        <h1 onClick={() => setIsAdmin(true)} style={{cursor: 'pointer'}}>📸 ChaliChali Photo Booth</h1>
-        <p>Current Queue: {queue.length} people</p>
-      </header>
-
-      {!isSubmitted ? (
-        <div className="card">
-          <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-            <input type="tel" placeholder="Phone" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
-            <button type="submit" className="join-btn">Join Queue</button>
-          </form>
+      <nav className="navbar">
+        <div className="nav-brand">📸 ChaliChali</div>
+        <div className="nav-links">
+          <button onClick={() => {setCurrentView('user'); setIsAuthorized(false)}}>Guest Sign-In</button>
+          <button onClick={() => setCurrentView('admin')}>Admin Dashboard</button>
         </div>
+      </nav>
+
+      {currentView === 'admin' ? (
+        !isAuthorized ? (
+          /* --- PIN PROTECTION VIEW --- */
+          <div className="card pin-card">
+            <h2>Enter Admin PIN</h2>
+            <form onSubmit={checkPin}>
+              <input 
+                type="password" 
+                placeholder="Enter 4-digit code" 
+                value={pinInput} 
+                onChange={(e) => setPinInput(e.target.value)} 
+                autoFocus
+              />
+              <button type="submit" className="join-btn">Unlock</button>
+            </form>
+          </div>
+        ) : (
+          /* --- AUTHORIZED ADMIN VIEW --- */
+          <div className="admin-section">
+            <div className="admin-header">
+              <h2>Staff Dashboard</h2>
+              <button className="logout-btn" onClick={() => setIsAuthorized(false)}>Lock</button>
+            </div>
+            <p>Total in line: {queue.length}</p>
+            <div className="admin-list">
+              {queue.map((person, index) => (
+                <div key={person.id} className="admin-item">
+                  <div className="info">
+                    <span className="rank">#{index + 1}</span>
+                    <strong>{person.name}</strong>
+                    <span className="phone">{person.phone}</span>
+                  </div>
+                  <button className="done-btn" onClick={() => handleNext(person.id)}>Next</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
       ) : (
-        <div className="card success">
-          <h2>#{myIndex} in line</h2>
-          <p>Estimated Wait: {myIndex * 5} mins</p>
-          <button onClick={() => setIsSubmitted(false)}>Add Another</button>
+        /* --- GUEST VIEW --- */
+        <div className="user-section">
+          <header>
+            <h1>Join the Photo Booth Queue</h1>
+            <p>{queue.length} people currently waiting</p>
+          </header>
+          {!isSubmitted ? (
+            <div className="card">
+              <form onSubmit={handleSubmit}>
+                <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
+                <input type="tel" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+                <button type="submit" className="join-btn">Join the Line</button>
+              </form>
+            </div>
+          ) : (
+            <div className="card success">
+              <h2>Success!</h2>
+              <div className="badge">#{myIndex}</div>
+              <p>Wait time: {myIndex * 5} mins</p>
+              <button className="secondary-btn" onClick={() => setIsSubmitted(false)}>Add another person</button>
+            </div>
+          )}
         </div>
       )}
     </div>
