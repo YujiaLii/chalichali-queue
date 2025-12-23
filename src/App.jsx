@@ -128,7 +128,11 @@ function App() {
             <div className="card success">
               <h2>Success!</h2>
               <div className="badge">#{myIndex}</div>
-              <p>Wait time: {myIndex * 20} mins</p>
+              {myIndex === 1 ? (
+                <p><strong>You are next!</strong>Please head to the booth.</p>
+               ) : (
+                <p>Estimated wait time: {waitTime} mins</p>
+               )}
               <button className="secondary-btn" onClick={() => setIsSubmitted(false)}>Add another person</button>
             </div>
           )}
