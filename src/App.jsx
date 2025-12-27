@@ -57,8 +57,7 @@ function App() {
 
   useEffect(() => {
     if (myId && queue.length > 0) {
-      const stillInQueue = queue.find(item => item.id === myId);
-      if (!stillInQueue) {
+      if (!queue.find(item => item.id === myId)) {
         setMyId(null);
         localStorage.removeItem('chaliQueueId');
       }
@@ -73,8 +72,9 @@ function App() {
           <span>ChaliChali</span>
         </div>
         <div className="nav-links">
-          <button onClick={() => {setCurrentView('user'); setIsAuthorized(false)}}>Join Line</button>
-          <button onClick={() => setCurrentView('admin')}>Admin</button>
+          {/* This button now forces a return to the Sign-In form */}
+          <button onClick={startNewSignIn}>Guest Sign-In</button>
+          <button onClick={() => setCurrentView('admin')}>Admin Dashboard</button>
         </div>
       </nav>
 
@@ -96,10 +96,7 @@ function App() {
             <div className="admin-list">
               {queue.map((person, index) => (
                 <div key={person.id} className="admin-item">
-                  <div className="info">
-                    <span className="rank">#{index + 1}</span>
-                    <strong>{person.name}</strong>
-                  </div>
+                  <div className="info"><span>#{index + 1}</span> <strong>{person.name}</strong></div>
                   <button className="done-btn" onClick={() => handleNext(person.id)}>Next</button>
                 </div>
               ))}
@@ -115,28 +112,29 @@ function App() {
               <div className="price-tag">Only $10!</div>
               <p className="payment-method">💵 Cash Only</p>
               
-              <p className="waiting-count">{queue.length} people currently waiting</p>
+              <div className="wait-pill">{queue.length} people in line</div>
               
               <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
                 <input type="tel" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
-                <button type="submit" className="join-btn">Get My Spot</button>
+                <button type="submit" className="join-btn">Join the Line</button>
               </form>
             </div>
           ) : (
             <div className="card success">
               <img src="/chalichali_logo.jpg" alt="ChaliChali" className="hero-logo-small" />
-              <h2>Success!</h2>
+              <h2>Your Spot is Saved!</h2>
               <div className="badge">#{myIndex}</div>
               {myIndex === 1 ? (
-                <p className="next-notice"><strong>You are next!</strong> Please head to the booth.</p>
+                <div className="next-pill">You're Next! Head to the booth.</div>
               ) : (
-                <p>Estimated wait: <strong>{waitTime} mins</strong></p>
+                <p className="wait-text">Estimated wait: <strong>{waitTime} mins</strong></p>
               )}
               
               <div className="marketing-footer">
                 <p className="marketing-main">Ready for your close-up? 📸</p>
                 <p className="marketing-price">Only $10! (Cash Only)</p>
+                <p className="auto-refresh">Updates automatically • Do not close</p>
               </div>
             </div>
           )}
