@@ -37,15 +37,19 @@ function App() {
   };
 
   const handleNext = async (id) => {
-    if(window.confirm("Next customer?")) {
+    if(window.confirm("Process next customer?")) {
       await deleteDoc(doc(db, "queue", id));
     }
   };
 
   const checkPin = (e) => {
     e.preventDefault();
-    if (pinInput === ADMIN_PIN) setIsAuthorized(true);
-    else { alert("Wrong PIN!"); setPinInput(''); }
+    if (pinInput === ADMIN_PIN) {
+      setIsAuthorized(true);
+    } else {
+      alert("Wrong PIN!");
+      setPinInput('');
+    }
   };
 
   const myIndex = queue.findIndex(item => item.id === myId) + 1;
@@ -53,7 +57,8 @@ function App() {
 
   useEffect(() => {
     if (myId && queue.length > 0) {
-      if (!queue.find(item => item.id === myId)) {
+      const stillInQueue = queue.find(item => item.id === myId);
+      if (!stillInQueue) {
         setMyId(null);
         localStorage.removeItem('chaliQueueId');
       }
@@ -91,7 +96,10 @@ function App() {
             <div className="admin-list">
               {queue.map((person, index) => (
                 <div key={person.id} className="admin-item">
-                  <div className="info"><span>#{index + 1}</span> <strong>{person.name}</strong></div>
+                  <div className="info">
+                    <span className="rank">#{index + 1}</span>
+                    <strong>{person.name}</strong>
+                  </div>
                   <button className="done-btn" onClick={() => handleNext(person.id)}>Next</button>
                 </div>
               ))}
@@ -102,30 +110,34 @@ function App() {
         <div className="user-section">
           {!myId ? (
             <div className="card">
-              <img src="/chalichali_logo.jpg" alt="Logo" className="hero-logo" />
-              <h1 className="hero-title">Capture the Moment!</h1>
-              <div className="price-tag">$10 Per Session</div>
-              <p className="payment-notice">💵 Cash Only</p>
+              <img src="/chalichali_logo.jpg" alt="ChaliChali" className="hero-logo" />
+              <h1>Capture the Moment!</h1>
+              <div className="price-tag">Only $10!</div>
+              <p className="payment-method">💵 Cash Only</p>
               
-              <hr className="divider" />
+              <p className="waiting-count">{queue.length} people currently waiting</p>
               
-              <p className="waiting-status">{queue.length} people currently waiting</p>
               <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
                 <input type="tel" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
-                <button type="submit" className="join-btn">Join the Queue</button>
+                <button type="submit" className="join-btn">Get My Spot</button>
               </form>
             </div>
           ) : (
             <div className="card success">
-              <h2>You're in line!</h2>
+              <img src="/chalichali_logo.jpg" alt="ChaliChali" className="hero-logo-small" />
+              <h2>Success!</h2>
               <div className="badge">#{myIndex}</div>
               {myIndex === 1 ? (
-                <p className="next-alert"><strong>You are next!</strong> Please have your $10 cash ready.</p>
+                <p className="next-notice"><strong>You are next!</strong> Please head to the booth.</p>
               ) : (
                 <p>Estimated wait: <strong>{waitTime} mins</strong></p>
               )}
-              <p className="auto-update">This page updates automatically.</p>
+              
+              <div className="marketing-footer">
+                <p className="marketing-main">Ready for your close-up? 📸</p>
+                <p className="marketing-price">Only $10! (Cash Only)</p>
+              </div>
             </div>
           )}
         </div>
