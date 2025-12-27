@@ -130,7 +130,7 @@ function App() {
               ) : (
                 <p>Estimated wait time: {waitTime} mins</p>
               )}
-              <p className="note">Feel free to browse; this page will update automatically!</p>
+              <p> className="Capture the Moment! S10 per session (Cash Only)"</p>
             </div>
           )}
         </div>
