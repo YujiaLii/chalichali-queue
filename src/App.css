@@ -175,3 +175,50 @@ h3 {
   cursor: pointer;
   width: 100%;
 }
+.hero-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.price-tag {
+  background: #2ecc71;
+  color: white;
+  display: inline-block;
+  padding: 8px 25px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin: 15px 0 5px 0;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.payment-notice {
+  font-weight: 600;
+  color: #e67e22;
+  margin-bottom: 20px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+.next-alert {
+  background: #fff9c4;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #fbc02d;
+}
+
+.nav-logo {
+  height: 30px;
+  margin-right: 10px;
+}
