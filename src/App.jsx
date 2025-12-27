@@ -44,12 +44,16 @@ function App() {
 
   const checkPin = (e) => {
     e.preventDefault();
-    if (pinInput === ADMIN_PIN) {
-      setIsAuthorized(true);
-    } else {
-      alert("Wrong PIN!");
-      setPinInput('');
-    }
+    if (pinInput === ADMIN_PIN) setIsAuthorized(true);
+    else { alert("Wrong PIN!"); setPinInput(''); }
+  };
+
+  // Function for the Nav Button to allow a fresh sign-in
+  const startNewSignIn = () => {
+    localStorage.removeItem('chaliQueueId');
+    setMyId(null);
+    setCurrentView('user');
+    setIsAuthorized(false);
   };
 
   const myIndex = queue.findIndex(item => item.id === myId) + 1;
