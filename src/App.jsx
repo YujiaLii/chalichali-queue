@@ -70,10 +70,13 @@ function App() {
     }
   }, [queue, myId]);
 
-  return (
+return (
     <div className="container">
       <nav className="navbar">
-        <div className="nav-brand">📸 ChaliChali</div>
+        <div className="nav-brand">
+          {/* Replace with your local logo image */}
+          <img src="/logo.png" alt="ChaliChali" className="nav-logo" />
+        </div>
         <div className="nav-links">
           <button onClick={() => {setCurrentView('user'); setIsAuthorized(false)}}>Guest Sign-In</button>
           <button onClick={() => setCurrentView('admin')}>Admin Dashboard</button>
@@ -113,8 +116,14 @@ function App() {
         <div className="user-section">
           {!myId ? (
             <div className="card">
-              <h1>Join the Queue</h1>
-              <p>{queue.length} people waiting</p>
+              <div className="marketing-header">
+                <h1>Capture the Moment!</h1>
+                <div className="price-tag">$10 per session</div>
+                <p className="cash-only">💵 Cash Only</p>
+              </div>
+              
+              <p className="waiting-text">{queue.length} people currently waiting</p>
+              
               <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
                 <input type="tel" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
@@ -128,9 +137,10 @@ function App() {
               {myIndex === 1 ? (
                 <p><strong>You are next!</strong> Please head to the booth.</p>
               ) : (
-                <p>Estimated wait time: {waitTime} mins</p>
+                <p>Estimated wait time: <strong>{waitTime} mins</strong></p>
               )}
-              <p> className="Capture the Moment! S10 per session (Cash Only)"</p>
+              <hr />
+              <p className="reminder-text">Please have <strong>$10 Cash</strong> ready!</p>
             </div>
           )}
         </div>
